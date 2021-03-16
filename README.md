@@ -1,7 +1,12 @@
 # terraform-snowflake-fast-data-warehouse
+
+This repo is designed to get data teams started with Snowflake Terraform quickly.
+
+For a quick read on how you may want to set up Terraform, check out [this blog post](https://blog.getdbt.com/how-we-configure-snowflake/) from Fishtown Analytics.
 Quickly set up a basic data warehouse with Terraform's Snowflake provider
 
 This repo contains the Terraform for standing up Immuta's Snowflake data warehouse. It leverages the [Terraform Snowflake provider](https://github.com/chanzuckerberg/terraform-provider-snowflake).
+
 
 ## Strategy
 
