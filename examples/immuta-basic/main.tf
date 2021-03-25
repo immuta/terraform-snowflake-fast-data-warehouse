@@ -14,8 +14,12 @@ module "core" {
   source = "./modules/core"
 
   employee_users = local.employees
-  system_users   = { "immuta" = { name = "IMMUTA_USER" } }
-  roles          = { immuta = { name = "IMMUTA" } }
+  system_users = {
+    "immuta" = { name = "IMMUTA_USER" }
+  }
+  roles = {
+    immuta = { name = "IMMUTA" }
+  }
   warehouses = {
     governance = { name = "GOVERN_WH" }
     reporting  = { name = "REPORTING_WH" }
@@ -41,7 +45,7 @@ module "fivetran_db" {
   grant_role_to_users = [module.core.roles["immuta"].name]
 }
 
-// role and warehouse grants
+// role grants
 
 resource "snowflake_role_grants" "immuta" {
   role_name = module.core.roles["immuta"].name
@@ -50,14 +54,16 @@ resource "snowflake_role_grants" "immuta" {
   users = [module.core.system_users["immuta"].name]
 }
 
+// warehouse grants
+
 resource "snowflake_warehouse_grant" "governance" {
   warehouse_name = module.core.warehouses["governance"].name
 
-  roles = [[module.core.roles["immuta"].name]]
+  roles = [module.core.roles["immuta"].name]
 }
 
 resource "snowflake_warehouse_grant" "report" {
   warehouse_name = module.core.warehouses["report"].name
 
-  roles          = ["PUBLIC"]
+  roles = ["PUBLIC"]
 }

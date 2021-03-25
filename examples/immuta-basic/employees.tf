@@ -1,20 +1,20 @@
 locals {
   employees = {
-    employeeA = {
-      name       = "employeeA"
-      login_name = "employeeA@immuta.com"
+    employee_a = {
+      name       = "employee_a"
+      login_name = "employee_a@immuta.com"
     }
-    employeeB = {
-      name       = "employeeB"
-      login_name = "employeeB@immuta.com"
+    employee_b = {
+      name       = "employee_b"
+      login_name = "employee_b@immuta.com"
     }
-    employeeC = {
-      name       = "employeeC"
-      login_name = "employeeC@immuta.com"
+    employee_c = {
+      name       = "employee_c"
+      login_name = "employee_c@immuta.com"
     }
-    employeeD = {
-      name       = "employeeD"
-      login_name = "employeeD@immuta.com"
+    employee_d = {
+      name       = "employee_d"
+      login_name = "employee_d@immuta.com"
     }
   }
 }

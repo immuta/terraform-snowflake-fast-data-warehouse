@@ -12,10 +12,10 @@ terraform {
 module "example_core" {
   source = "./modules/core"
 
-  employee_users = {"sbailey" = { name = "SBAILEY" } }
-  system_users = {"immuta"  = { name = "IMMUTA" }}
+  employee_users = { "sbailey" = { name = "SBAILEY" } }
+  system_users   = { "immuta" = { name = "IMMUTA" } }
   roles = {
-    analyst    = { name = "REPORTER" }
+    analyst = { name = "REPORTER" }
   }
   warehouses = {
     transform = { name = "TRANSFORM_WH" }
