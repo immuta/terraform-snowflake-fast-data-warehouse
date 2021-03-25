@@ -9,11 +9,11 @@ output "role" {
 }
 
 output "user" {
-  desription = "User resource created for the app. May be null."
+  description = "User resource created for the app. May be null."
   value      = var.create_user ? snowflake_user.app[0] : null
 }
 
 output "warehouse" {
-  desription = "Warehouse resource created for the app. May be null."
+  description = "Warehouse resource created for the app. May be null."
   value      = var.create_warehouse ? snowflake_warehouse.app[0] : null
 }
