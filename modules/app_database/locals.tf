@@ -8,16 +8,35 @@ locals {
     var.grant_role_to_users
   )
   elevated_privileges = {
-    database = ["CREATE SCHEMA"]
+    database = [
+      "CREATE SCHEMA",
+      "MODIFY",
+      "MONITOR",
+    ]
     schema = [
       "CREATE EXTERNAL TABLE",
       "CREATE FILE FORMAT",
+      "CREATE FUNCTION",
+      "CREATE MASKING POLICY",
+      "CREATE PIPE",
+      "CREATE PROCEDURE",
+      "CREATE STREAM",
+      "CREATE TASK",
+      "CREATE STAGE",
+      "CREATE SEQUENCE",
       "CREATE TABLE",
       "CREATE VIEW",
-      "MODIFY"
+      "MODIFY",
+      "MONITOR",
     ]
-    table = ["INSERT", "TRUNCATE", "UPDATE", "DELETE"]
-    view  = []
+    table = [
+      "DELETE",
+      "INSERT",
+      "REFERENCES",
+      "TRUNCATE",
+      "UPDATE",
+    ]
+    view = []
   }
   read_privileges = {
     database = ["USAGE"]
