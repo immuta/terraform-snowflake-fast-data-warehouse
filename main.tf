@@ -9,19 +9,30 @@ terraform {
 
 // This module generates base roles, warehouses and users
 // It does NOT create grants between these users
-module "example_core" {
-  source = "./modules/core"
-
-  employee_users = { "sbailey" = { name = "SBAILEY" } }
-  system_users   = { "immuta" = { name = "IMMUTA" } }
-  roles = {
-    analyst = { name = "REPORTER" }
+module "employees" {
+  source = "./modules/core_users"
+  users = {
+    "tom" = {}
+    "jerry" = {}
   }
+}
+
+module "core_roles" {
+  source = "./modules/core_roles"
+  roles = {
+    "analyst" = {name = "ANALYST"}
+  }
+}
+
+module "core_warehouses" {
+  source = "./modules/core_warehouses"
   warehouses = {
     transform = { name = "TRANSFORM_WH" }
     report    = { name = "REPORTING_WH" }
   }
+  default_comment = "This is my comment on these warehouses"
 }
+
 
 // databases
 module "example_db" {
@@ -29,32 +40,29 @@ module "example_db" {
 
   db_name             = "ANALYTICS"
   grant_role_to_roles = ["SYSADMIN"]
-  grant_role_to_users = [module.core.system_users["dbt"].name]
-  grant_read_to_roles = [module.core.roles["reporter"].name]
+  grant_role_to_users = [module.employees.users["tom"].name]
+  grant_read_to_roles = [module.core_roles.roles["analyst"].name]
 }
 
 // role and warehouse grants
-
 resource "snowflake_role_grants" "reporter" {
-  role_name = module.core.roles["reporter"].name
+  role_name = module.core_roles.roles["analyst"].name
 
-  roles = ["SYSADMIN"]
-  users = ["PUBLIC", module.core.system_users["immuta"].name]
+  roles = []
+  users = [
+    module.employees.users["jerry"].name
+  ]
 }
 
 resource "snowflake_warehouse_grant" "transform" {
-  warehouse_name = module.core.warehouses["transform"].name
+  warehouse_name = module.core_warehouses.warehouses["transform"].name
 
-  roles = concat(
-    [for m in module.developer_dbs : m.role.name],
-    [module.analytics_db.role.name]
-  )
+  roles = [module.core_roles.roles["analyst"].name]
 }
 
 resource "snowflake_warehouse_grant" "report" {
-  warehouse_name = module.core.warehouses["report"].name
+  warehouse_name = module.core_warehouses.warehouses["report"].name
   roles = [
-    "PUBLIC",
-    module.core.roles["reporter"].name
+    module.core_roles.roles["analyst"].name
   ]
 }

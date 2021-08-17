@@ -5,22 +5,22 @@ variable "warehouses" {
 }
 
 variable default_auto_resume {
-  type = "boolean"
+  type = bool
   default = true
 }
 
 variable default_auto_suspend {
-  type = "string"
+  type = string
   default = 60
 }
 
-variable "default_comment" {
-  type = "string"
+variable default_comment {
+  type = string
   description = "Comment to be added to each warehouse, when no other comment specified."
   default = "Warehouse managed by Terraform."
 }
 
 variable default_size {
-  type = "string"
+  type = string
   default = "x-small"
 }

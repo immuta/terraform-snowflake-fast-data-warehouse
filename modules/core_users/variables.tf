@@ -4,22 +4,10 @@ variable "users" {
   type        = map(any)
 }
 
-variable "default_user_namespace" {
-  type        = string
-  description = "foo"
-  default     = "PUBLIC"
-}
-
-variable "default_user_role" {
-  type        = string
-  description = "foo"
-  default     = "PUBLIC"
-}
-
-variable "default_user_warehouse" {
-  type        = string
-  description = "foo"
-  default     = "REPORTING_WH"
+variable "default_comment" {
+  type = string
+  description = "Comment to be added to each warehouse, when no other comment specified."
+  default = "User managed by Terraform."
 }
 
 variable "default_display_name" {
@@ -40,6 +28,24 @@ variable "default_first_name" {
   default     = null
 }
 
+variable "default_user_namespace" {
+  type        = string
+  description = "foo"
+  default     = "PUBLIC"
+}
+
+variable "default_user_role" {
+  type        = string
+  description = "foo"
+  default     = "PUBLIC"
+}
+
+variable "default_user_warehouse" {
+  type        = string
+  description = "foo"
+  default     = null
+}
+
 variable "default_last_name" {
   type        = string
   description = "foo"
@@ -53,7 +59,7 @@ variable "default_login_name" {
 }
 
 variable "default_must_change_password" {
-  type        = "boolean"
+  type        = bool
   description = "foo"
   default     = false
 }

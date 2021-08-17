@@ -1,11 +1,11 @@
 variable "roles" {
   default     = {}
-  description = "Map of roles to create. If 'name' is not specified, object key will be used."
+  description = "Map of roles to create. 'name' required. Values from the 'snowflake_user' resource will be applied. 'name' is required."
   type        = map
 }
 
-variable "default_comment" {
-  type = "string"
+variable default_comment {
+  type = string
   description = "Comment to be added to each warehouse, when no other comment specified."
-  default = "Warehouse managed by Terraform."
+  default = "Role managed by Terraform."
 }
