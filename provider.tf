@@ -1,4 +1,4 @@
-provider snowflake {
+provider "snowflake" {
   account = var.snowflake_account
   region  = var.snowflake_region
 
