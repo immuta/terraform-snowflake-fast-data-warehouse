@@ -24,19 +24,19 @@ variable "description" {
 variable "grant_role_to_roles" {
   default     = []
   description = "The roles that will have full access to app resources."
-  type        = list
+  type        = list(any)
 }
 
 variable "grant_role_to_users" {
   default     = []
   description = "The users that will have full access to app resources."
-  type        = list
+  type        = list(any)
 }
 
 variable "grant_read_to_roles" {
   default     = []
   description = "The roles that should have read access to database resources."
-  type        = list
+  type        = list(any)
 }
 
 variable "user_default_warehouse" {

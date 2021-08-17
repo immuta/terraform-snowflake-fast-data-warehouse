@@ -5,9 +5,9 @@ variable "users" {
 }
 
 variable "default_comment" {
-  type = string
+  type        = string
   description = "Comment to be added to each warehouse, when no other comment specified."
-  default = "User managed by Terraform."
+  default     = "User managed by Terraform."
 }
 
 variable "default_display_name" {

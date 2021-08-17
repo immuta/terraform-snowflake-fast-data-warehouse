@@ -12,7 +12,7 @@ terraform {
 module "employees" {
   source = "./modules/core_users"
   users = {
-    "tom" = {}
+    "tom"   = {}
     "jerry" = {}
   }
 }
@@ -20,7 +20,7 @@ module "employees" {
 module "core_roles" {
   source = "./modules/core_roles"
   roles = {
-    "analyst" = {name = "ANALYST"}
+    "analyst" = { name = "ANALYST" }
   }
 }
 
