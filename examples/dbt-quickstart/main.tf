@@ -66,7 +66,7 @@ module analytics_db {
   grant_read_to_roles = [module.bulk_roles.roles["reporter"].name]
 }
 
-module "raw_db" {
+module raw_db {
   source = "./modules/application_database"
 
   db_name             = "RAW"
@@ -78,7 +78,7 @@ module "raw_db" {
   ]
 }
 
-module "developer_dbs" {
+module developer_dbs {
   for_each = ["dev1", "dev2"]
   source   = "./modules/application_database"
 
@@ -91,14 +91,14 @@ module "developer_dbs" {
 // GRANTS
 // Grants on core roles and warehouses need to be performed
 // after all resources are defined and created.
-resource "snowflake_role_grants" "reporter" {
+resource snowflake_role_grants reporter {
   role_name = module.bulk_roles.roles["reporter"].name
 
   roles = [local.public_role, local.sysadmin_role]
   users = [module.systems.users["immuta"].name]
 }
 
-resource "snowflake_warehouse_grant" "transform" {
+resource snowflake_warehouse_grant transform {
   warehouse_name = module.bulk_warehouses.warehouses["transform"].name
 
   roles = concat(
@@ -107,7 +107,7 @@ resource "snowflake_warehouse_grant" "transform" {
   )
 }
 
-resource "snowflake_warehouse_grant" "report" {
+resource snowflake_warehouse_grant report {
   warehouse_name = module.bulk_warehouses.warehouses["report"].name
   roles = [
     "PUBLIC",

@@ -9,7 +9,7 @@ terraform {
 
 // This module generates base roles, warehouses and users
 // It does NOT create grants between these users
-module "employees" {
+module employees {
   source = "./modules/bulk_users"
   users = {
     "tom" = {}
@@ -20,14 +20,14 @@ module "employees" {
   }
 }
 
-module "bulk_roles" {
+module bulk_roles {
   source = "./modules/bulk_roles"
   roles = {
     "analyst" = { name = "ANALYST" }
   }
 }
 
-module "bulk_warehouses" {
+module bulk_warehouses {
   source = "./modules/bulk_warehouses"
   warehouses = {
     transform = { name = "TRANSFORM_WH" }
@@ -38,7 +38,7 @@ module "bulk_warehouses" {
 }
 
 // databases
-module "example_db" {
+module example_db {
   source = "./modules/application_database"
 
   db_name             = "ANALYTICS"
@@ -48,7 +48,7 @@ module "example_db" {
 }
 
 // role and warehouse grants
-resource "snowflake_role_grants" "reporter" {
+resource snowflake_role_grants reporter {
   role_name = module.bulk_roles.roles["analyst"].name
 
   roles = []
@@ -57,13 +57,13 @@ resource "snowflake_role_grants" "reporter" {
   ]
 }
 
-resource "snowflake_warehouse_grant" "transform" {
+resource snowflake_warehouse_grant transform {
   warehouse_name = module.bulk_warehouses.warehouses["transform"].name
 
   roles = [module.bulk_roles.roles["analyst"].name]
 }
 
-resource "snowflake_warehouse_grant" "report" {
+resource snowflake_warehouse_grant report {
   warehouse_name = module.bulk_warehouses.warehouses["report"].name
   roles = [
     module.bulk_roles.roles["analyst"].name

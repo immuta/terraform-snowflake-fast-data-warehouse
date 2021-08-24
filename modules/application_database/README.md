@@ -14,7 +14,7 @@ The `COOLAPP` role is granted privileges on other resources in this application.
 A perfect use case for the `app_database` module is for developer databases.
 
 ```{terraform}
-module "developer_dbs" {
+module developer_dbs {
     for_each = ["USER1", "USER2"]
     source = "./modules/app_database"
 

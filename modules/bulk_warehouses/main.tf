@@ -10,7 +10,7 @@ terraform {
   }
 }
 
-resource "snowflake_warehouse" "main" {
+resource snowflake_warehouse main {
   for_each = var.warehouses
 
   name           = coalesce(each.key, each.value["name"])

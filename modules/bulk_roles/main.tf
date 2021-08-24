@@ -10,7 +10,7 @@ terraform {
   }
 }
 
-resource "snowflake_role" "main" {
+resource snowflake_role main {
   for_each = var.roles
 
   name    = coalesce(each.value["name"], each.key)
