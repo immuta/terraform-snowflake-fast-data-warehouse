@@ -16,18 +16,18 @@ locals {
 // This section generates base roles, warehouses and users
 // It does NOT create grants between these users
 module employees {
-  source = "./modules/core_users"
+  source = "./modules/bulk_users"
 
   users = {
     "dev1"      = { login_name = "dev1@immuta.com" }
     "dev2"      = { login_name = "dev2@immuta.com" }
     "consumer1" = { name = "consumer", login_name = "consumer@immuta.com" }
   }
-  default_role = module.core_roles.roles["reporter"]
+  default_role = module.bulk_roles.roles["reporter"]
 }
 
 module systems {
-  source = "./modules/core_users"
+  source = "./modules/bulk_users"
 
   users = {
     "dbt"     = { name = "DBT" }
@@ -36,8 +36,8 @@ module systems {
   }
 }
 
-module core_roles {
-  source = "./modules/core_roles"
+module bulk_roles {
+  source = "./modules/bulk_roles"
 
   roles = {
     loader      = { name = "LOADER" }
@@ -46,8 +46,8 @@ module core_roles {
   }
 }
 
-module core_warehouses {
-  source = "./modules/core_warehouses"
+module bulk_warehouses {
+  source = "./modules/bulk_warehouses"
 
   warehouses = {
     transform = { name = "TRANSFORM_WH" }
@@ -63,7 +63,7 @@ module analytics_db {
   db_name             = "ANALYTICS"
   grant_role_to_roles = ["SYSADMIN"]
   grant_role_to_users = [module.systems.users["dbt"].name]
-  grant_read_to_roles = [module.core_roles.roles["reporter"].name]
+  grant_read_to_roles = [module.bulk_roles.roles["reporter"].name]
 }
 
 module "raw_db" {
@@ -73,8 +73,8 @@ module "raw_db" {
   grant_role_to_roles = ["SYSADMIN"]
   grant_role_to_users = [module.systems.users["meltano"].name]
   grant_read_to_roles = [
-    module.core_roles.roles["reporter"].name,
-    module.core_roles.roles["transformer"].name,
+    module.bulk_roles.roles["reporter"].name,
+    module.bulk_roles.roles["transformer"].name,
   ]
 }
 
@@ -92,14 +92,14 @@ module "developer_dbs" {
 // Grants on core roles and warehouses need to be performed
 // after all resources are defined and created.
 resource "snowflake_role_grants" "reporter" {
-  role_name = module.core_roles.roles["reporter"].name
+  role_name = module.bulk_roles.roles["reporter"].name
 
   roles = [local.public_role, local.sysadmin_role]
   users = [module.systems.users["immuta"].name]
 }
 
 resource "snowflake_warehouse_grant" "transform" {
-  warehouse_name = module.core_warehouses.warehouses["transform"].name
+  warehouse_name = module.bulk_warehouses.warehouses["transform"].name
 
   roles = concat(
     [for m in module.developer_dbs : m.role.name],
@@ -108,9 +108,9 @@ resource "snowflake_warehouse_grant" "transform" {
 }
 
 resource "snowflake_warehouse_grant" "report" {
-  warehouse_name = module.core_warehouses.warehouses["report"].name
+  warehouse_name = module.bulk_warehouses.warehouses["report"].name
   roles = [
     "PUBLIC",
-    module.core_roles.roles["reporter"].name
+    module.bulk_roles.roles["reporter"].name
   ]
 }

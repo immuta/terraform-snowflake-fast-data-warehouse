@@ -4,6 +4,14 @@ variable "warehouses" {
   type        = map(any)
 }
 
+variable create_resource_monitor {
+  type = bool
+  default = true
+  description = "If true, each warehouse created will have a resource monitor created."
+}
+
+variable default_resource_monitor_
+
 variable "default_auto_resume" {
   type    = bool
   default = true
