@@ -1,5 +1,4 @@
 output users {
-  description = "Map of all system users created."
-  sensitive   = true
+  description = "Map of user resources created."
   value       = snowflake_user.main
 }

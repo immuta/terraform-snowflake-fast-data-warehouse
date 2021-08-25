@@ -7,27 +7,30 @@ terraform {
   }
 }
 
+locals {
+  developers = ["harry", "hermione"]
+}
+
 // This module generates base roles, warehouses and users
 // It does NOT create grants between these users
-module employees {
+module "employees" {
   source = "./modules/bulk_users"
   users = {
-    "tom" = {}
-    "jerry" = {
-      first_name = "Ron"
-      last_name  = "Weasley"
-    }
+    "harry"    = {}
+    "ron"      = { first_name = "Ronald" }
+    "hermione" = {}
+    "fred"     = { login_name = "Ted" }
   }
 }
 
-module bulk_roles {
+module "bulk_roles" {
   source = "./modules/bulk_roles"
   roles = {
     analyst = { name = "ANALYST_ROLE" }
   }
 }
 
-module bulk_warehouses {
+module "bulk_warehouses" {
   source = "./modules/bulk_warehouses"
   warehouses = {
     transform = { name = "TRANSFORM_WH", create_resource_monitor = true }
@@ -37,37 +40,47 @@ module bulk_warehouses {
   default_comment = "This is my warehouse comment."
 }
 
-// databases
-module example_db {
-  source = "./modules/application_database"
-
-  db_name             = "ANALYTICS"
-  grant_role_to_roles = []
-  grant_role_to_users = [module.employees.users["tom"].name]
-  grant_read_to_roles = [module.bulk_roles.roles["analyst"].name]
-}
-
 // role and warehouse grants
-module bulk_role_grants {
+module "bulk_role_grants" {
   source = "./modules/bulk_role_grants"
   grants = {
     analyst = {
       role_name = module.bulk_roles.roles["analyst"].name
-      users = [module.employees.users["jerry"].name]
+      users     = [module.employees.users["harry"].name]
     }
   }
 }
 
-module bulk_warehouse_grants {
+module "bulk_warehouse_grants" {
   source = "./modules/bulk_warehouse_grants"
   grants = {
     transform = {
       warehouse_name = module.bulk_warehouses.warehouses["transform"].name
-      roles = [module.bulk_roles.roles["analyst"].name]
+      roles          = [module.bulk_roles.roles["analyst"].name]
     }
     report = {
       warehouse_name = module.bulk_warehouses.warehouses["report"].name
-      roles = [module.bulk_roles.roles["analyst"].name]
+      roles          = [module.bulk_roles.roles["analyst"].name]
     }
   }
+}
+
+// databases
+module "example_db" {
+  source = "./modules/application_database"
+
+  db_name             = "ANALYTICS"
+  grant_role_to_roles = []
+  grant_role_to_users = [module.employees.users["ron"].name]
+  grant_read_to_roles = [module.bulk_roles.roles["analyst"].name]
+}
+
+module "developer_dbs" {
+  for_each = toset(local.developers)
+  source   = "./modules/application_database"
+
+  db_name             = module.employees.users[each.key].name
+  create_user         = false
+  create_warehouse    = false
+  grant_role_to_users = [module.employees.users[each.key].name]
 }

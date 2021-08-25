@@ -10,6 +10,12 @@ terraform {
   }
 }
 
+locals {
+  users_requiring_password = [
+    for k, v in var.users : k if lookup(v, "create_random_password", false)
+  ]
+}
+
 resource snowflake_user main {
   for_each = var.users
 
