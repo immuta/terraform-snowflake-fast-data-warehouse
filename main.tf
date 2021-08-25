@@ -23,14 +23,14 @@ module employees {
 module bulk_roles {
   source = "./modules/bulk_roles"
   roles = {
-    "analyst" = { name = "ANALYST" }
+    analyst = { name = "ANALYST_ROLE" }
   }
 }
 
 module bulk_warehouses {
   source = "./modules/bulk_warehouses"
   warehouses = {
-    transform = { name = "TRANSFORM_WH" }
+    transform = { name = "TRANSFORM_WH", create_resource_monitor = true }
     report    = { name = "REPORTING_WH", size = "medium" }
   }
   default_size    = "x-small"
@@ -48,7 +48,7 @@ module example_db {
 }
 
 // role and warehouse grants
-resource snowflake_role_grants reporter {
+resource snowflake_role_grants analyst {
   role_name = module.bulk_roles.roles["analyst"].name
 
   roles = []

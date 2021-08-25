@@ -26,8 +26,11 @@ resource snowflake_user main {
   must_change_password = lookup(each.value, "must_change_password", var.default_must_change_password)
   password             = lookup(each.value, "password", random_password.users[each.key].result)
 
-  lifecycle_ignore {
-    must_change_password
+  lifecycle {
+    ignore_changes = [
+      password,
+      must_change_password
+    ]
   }
 }
 
