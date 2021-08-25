@@ -48,24 +48,26 @@ module example_db {
 }
 
 // role and warehouse grants
-resource snowflake_role_grants analyst {
-  role_name = module.bulk_roles.roles["analyst"].name
-
-  roles = []
-  users = [
-    module.employees.users["jerry"].name
-  ]
+module bulk_role_grants {
+  source = "./modules/bulk_role_grants"
+  grants = {
+    analyst = {
+      role_name = module.bulk_roles.roles["analyst"].name
+      users = [module.employees.users["jerry"].name]
+    }
+  }
 }
 
-resource snowflake_warehouse_grant transform {
-  warehouse_name = module.bulk_warehouses.warehouses["transform"].name
-
-  roles = [module.bulk_roles.roles["analyst"].name]
-}
-
-resource snowflake_warehouse_grant report {
-  warehouse_name = module.bulk_warehouses.warehouses["report"].name
-  roles = [
-    module.bulk_roles.roles["analyst"].name
-  ]
+module bulk_warehouse_grants {
+  source = "./modules/bulk_warehouse_grants"
+  grants = {
+    transform = {
+      warehouse_name = module.bulk_warehouses.warehouses["transform"].name
+      roles = [module.bulk_roles.roles["analyst"].name]
+    }
+    report = {
+      warehouse_name = module.bulk_warehouses.warehouses["report"].name
+      roles = [module.bulk_roles.roles["analyst"].name]
+    }
+  }
 }
