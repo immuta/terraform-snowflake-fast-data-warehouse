@@ -28,13 +28,13 @@ resource "snowflake_user" "main" {
   login_name   = each.value["login_name"]
   display_name = each.value["display_name"]
 
-  password = coalesce(each.value["generate_user_password"], var.default_generate_user_password) ? random_password.users[each.key].result : null
+  password             = coalesce(each.value["generate_user_password"], var.default_generate_user_password) ? random_password.users[each.key].result : null
+  must_change_password = coalesce(each.value["must_change_password"], var.default_must_change_password)
 
-  comment              = try(coalesce(each.value["comment"], var.default_comment), null)
-  default_role         = try(coalesce(each.value["default_role"], var.default_role), null)
-  default_namespace    = try(coalesce(each.value["default_namespace"], var.default_namespace), null)
-  default_warehouse    = try(coalesce(each.value["default_warehouse"], var.default_warehouse), null)
-  must_change_password = try(coalesce(each.value["must_change_password"], var.default_must_change_password), null)
+  comment           = try(coalesce(each.value["comment"], var.default_comment), null)
+  default_role      = try(coalesce(each.value["default_role"], var.default_role), null)
+  default_namespace = try(coalesce(each.value["default_namespace"], var.default_namespace), null)
+  default_warehouse = try(coalesce(each.value["default_warehouse"], var.default_warehouse), null)
 
   depends_on = [random_password.users]
   lifecycle {

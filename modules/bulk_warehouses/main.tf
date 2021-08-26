@@ -17,7 +17,6 @@ locals {
   ]
 }
 
-
 resource "snowflake_warehouse" "main" {
   for_each = var.warehouses
 
