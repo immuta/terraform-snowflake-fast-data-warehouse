@@ -1,45 +1,35 @@
-# Core
+# Bulk Role Grants
 
-The `core` module serves as a "base layer" for the warehouse. It sets up the resources listed below.
+The `bulk_role_grants` module simplifies the creation of multiple Snowflake role grants.
 
-- generic users
-- generic roles
-- generic warehouses
+## Inputs
 
-*Generic*, in this sense, means it is not designed to accomplish an isolated
-purpose. For example, a `STITCH_USER` would reasonably be expected to operate
-only on the `STITCH` database. A `BI_TOOL_USER`, on the other hand, might be
-expected to operate on multiple databases.
+The `bulk_role_grants` module accepts a map of resource configurations, along with
+default attribute values for those resources that are not more specific.
 
-Please note that this module does not instantiate grants on users or roles.
+For each resource, resource attributes are decided in the following order:
 
-## Supplying values
+1. Attributes specified in the input resource map: e.g., `var.role_grants[key][attribute]`
+2. Attribues specified as module inputs: e.g., `var.default_size 
+3. Default attribute values for the resource. (For the `role_name` attribute, the map `key` will be used.)
 
-Each of the resources created in this module accepts an array of objects
-and will use a `lookup` for the object values when creating the resource. For
-example, a set of warehouses could be created by passing the following map:
+For example, a set of grants could be issued by passing the following map:
 
 ```{terraform}
-warehouses = {
-    load = {
-        name           = "LOADING_WH"
-        comment        = "Warehouse for Stitch and custom data loading."
-        warehouse_size = "x-small"
+module role_grants {
+    source = "./modules/bulk_role_grants
+
+    grants = {
+        marketing = {}                  # Grant "marketing" role to defaults
+        product   = {}
+        sales     = {}
+        data_team = {
+            role_name = "DATA_TEAM_ROLE
+            roles     = []              # override default grant
+            users     = ["HARRY"]       # override default user
+        }
     }
-    report = {
-        name           = "REPORTING_WH"
-        comment        = "Warehouse for Immuta, Looker, and ad-hoc user reporting."
-        warehouse_size = "x-small"
-        auto_suspend   = 180
-    }
+    default_roles = ["DATA_TEAM]
+    default_users = ["HARRY", "RON", "HERMIONE"]
 }
 ```
-
-## Separating System Users and Employee Users
-
-We separate system and employee users for two reasons:
-
-1. A list of employee users may be updated fairly frequently, whereas system users will likely remain static over time.
-2. When separated, all system users can be easily listed as an output variable in the top-level module.
-
-That said, the only built-in difference is that a password is generated for the system users, but not for the employee users.

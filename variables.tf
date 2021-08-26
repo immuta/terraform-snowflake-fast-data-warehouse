@@ -19,7 +19,6 @@ variable "snowflake_user_password" {
 }
 
 variable "snowflake_user_role" {
-  default     = "TERRAFORM"
   description = "The role of the Terraform user."
   type        = string
 }
