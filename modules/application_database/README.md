@@ -19,7 +19,7 @@ module developer_dbs {
     source = "./modules/application_database"
 
     db_name = each.value
-    create_user = false
+    create_application_user = false
     grant_role_to_users = [each.value]
 }
 ```

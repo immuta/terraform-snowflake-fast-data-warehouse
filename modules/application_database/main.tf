@@ -5,23 +5,26 @@ terraform {
       version = ">=0.23.2"
     }
   }
+  time = {
+    version = ">=0.7.2"
+  }
 }
 
 // application database
 
-resource snowflake_database app {
+resource "snowflake_database" "app" {
   name    = local.database_name
   comment = var.description
 }
 
 // application role
 
-resource snowflake_role app {
+resource "snowflake_role" "app" {
   name    = local.database_name
   comment = var.description
 }
 
-resource snowflake_role_grants app {
+resource "snowflake_role_grants" "app" {
   role_name = snowflake_role.app.name
 
   roles = var.grant_role_to_roles
@@ -30,7 +33,7 @@ resource snowflake_role_grants app {
 
 // read privileges on database + child objects
 
-resource snowflake_database_grant read {
+resource "snowflake_database_grant" "read" {
   for_each = toset(local.read_privileges["database"])
 
   database_name = snowflake_database.app.name
@@ -38,7 +41,7 @@ resource snowflake_database_grant read {
   roles         = local.all_read_roles
 }
 
-resource snowflake_schema_grant read {
+resource "snowflake_schema_grant" "read" {
   for_each = toset(local.read_privileges["schema"])
 
   database_name = snowflake_database.app.name
@@ -47,7 +50,7 @@ resource snowflake_schema_grant read {
   roles         = local.all_read_roles
 }
 
-resource snowflake_table_grant read {
+resource "snowflake_table_grant" "read" {
   for_each = toset(local.read_privileges["table"])
 
   database_name = snowflake_database.app.name
@@ -56,7 +59,7 @@ resource snowflake_table_grant read {
   roles         = local.all_read_roles
 }
 
-resource snowflake_view_grant read {
+resource "snowflake_view_grant" "read" {
   for_each = toset(local.read_privileges["view"])
 
   database_name = snowflake_database.app.name
@@ -67,7 +70,7 @@ resource snowflake_view_grant read {
 
 // elevated privileges on database + child objects
 
-resource snowflake_database_grant app_role {
+resource "snowflake_database_grant" "app_role" {
   for_each = toset(local.elevated_privileges["database"])
 
   database_name = snowflake_database.app.name
@@ -75,7 +78,7 @@ resource snowflake_database_grant app_role {
   roles         = local.all_elevated_roles
 }
 
-resource snowflake_schema_grant app_role {
+resource "snowflake_schema_grant" "app_role" {
   for_each = toset(local.elevated_privileges["schema"])
 
   database_name = snowflake_database.app.name
@@ -84,7 +87,7 @@ resource snowflake_schema_grant app_role {
   roles         = local.all_elevated_roles
 }
 
-resource snowflake_table_grant app_role {
+resource "snowflake_table_grant" "app_role" {
   for_each = toset(local.elevated_privileges["table"])
 
   database_name = snowflake_database.app.name
@@ -93,7 +96,7 @@ resource snowflake_table_grant app_role {
   roles         = local.all_elevated_roles
 }
 
-resource snowflake_view_grant app_role {
+resource "snowflake_view_grant" "app_role" {
   for_each = toset(local.elevated_privileges["view"])
 
   database_name = snowflake_database.app.name
