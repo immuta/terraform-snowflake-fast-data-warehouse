@@ -19,13 +19,13 @@ resource "snowflake_warehouse_grant" "app_role" {
 }
 
 resource "time_offset" "monitor_start_times" {
-  count = var.create_application_warehouse ? 1 : 0
+  count = local.create_warehouse_monitor ? 1 : 0
 
   offset_days = 1
 }
 
 resource "snowflake_resource_monitor" "app" {
-  count = var.create_application_warehouse && var.create_application_warehouse_monitor ? 1 : 0
+  count = local.create_warehouse_monitor ? 1 : 0
 
   name            = local.warehouse_monitor_name
   credit_quota    = 24

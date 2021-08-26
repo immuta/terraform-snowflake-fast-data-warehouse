@@ -21,6 +21,7 @@ module "employees" {
     "hermione" = {}
     "fred"     = { login_name = "Ted" }
   }
+  default_role = "PUBLIC"
 }
 
 module "bulk_roles" {
