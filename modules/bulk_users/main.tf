@@ -8,30 +8,33 @@ terraform {
       version = ">=2.2.0"
     }
   }
+  experiments = [module_variable_optional_attrs]
 }
 
 locals {
   users_requiring_password = [
-    for k, v in var.users : k if lookup(v, "generate_user_password", var.default_generate_user_password)
+    for k, v in var.users : k if coalesce(v.generate_user_password, var.default_generate_user_password)
   ]
 }
 
 
-resource snowflake_user main {
+resource "snowflake_user" "main" {
   for_each = var.users
 
-  name                 = lookup(each.value, "name", each.key)
-  comment              = lookup(each.value, "comment", var.default_comment)
-  default_role         = lookup(each.value, "default_role", var.default_role)
-  default_namespace    = lookup(each.value, "default_namespace", var.default_namespace)
-  default_warehouse    = lookup(each.value, "default_warehouse", var.default_warehouse)
-  display_name         = lookup(each.value, "display_name", var.default_display_name)
-  email                = lookup(each.value, "email", var.default_email)
-  first_name           = lookup(each.value, "first_name", var.default_first_name)
-  last_name            = lookup(each.value, "last_name", var.default_last_name)
-  login_name           = lookup(each.value, "login_name", var.default_login_name)
-  must_change_password = lookup(each.value, "must_change_password", var.default_must_change_password)
-  password             = lookup(each.value, "generate_user_password", var.default_generate_user_password) ? random_password.users[each.key].result : null
+  name         = coalesce(each.value["name"], each.key)
+  email        = each.value["email"]
+  first_name   = each.value["first_name"]
+  last_name    = each.value["last_name"]
+  login_name   = each.value["login_name"]
+  display_name = each.value["display_name"]
+
+  password = coalesce(each.value["generate_user_password"], var.default_generate_user_password) ? random_password.users[each.key].result : null
+
+  comment              = try(coalesce(each.value["comment"], var.default_comment), null)
+  default_role         = try(coalesce(each.value["default_role"], var.default_role), null)
+  default_namespace    = try(coalesce(each.value["default_namespace"], var.default_namespace), null)
+  default_warehouse    = try(coalesce(each.value["default_warehouse"], var.default_warehouse), null)
+  must_change_password = try(coalesce(each.value["must_change_password"], var.default_must_change_password), null)
 
   depends_on = [random_password.users]
   lifecycle {
@@ -42,7 +45,7 @@ resource snowflake_user main {
   }
 }
 
-resource random_password users {
+resource "random_password" "users" {
   for_each = toset(local.users_requiring_password)
 
   length  = 16
