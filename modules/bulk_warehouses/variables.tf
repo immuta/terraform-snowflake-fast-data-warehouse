@@ -5,7 +5,7 @@ variable "warehouses" {
     name                    = optional(string)
     comment                 = optional(string)
     auto_suspend            = optional(string)
-    auto_resume             = optional(number)
+    auto_resume             = optional(bool)
     warehouse_size          = optional(string)
     create_resource_monitor = optional(bool)
     })

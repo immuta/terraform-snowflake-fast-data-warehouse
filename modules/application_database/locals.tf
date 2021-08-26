@@ -32,4 +32,5 @@ locals {
   )
   user_name      = upper("${var.database_name}_USER")
   warehouse_name = upper("${var.database_name}_WH")
+  warehouse_monitor_name = upper("${local.warehouse_name}_MONITOR")
 }

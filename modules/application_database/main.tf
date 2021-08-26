@@ -2,11 +2,11 @@ terraform {
   required_providers {
     snowflake = {
       source  = "chanzuckerberg/snowflake"
-      version = ">=0.23.2"
+      version = ">=0.23.1"
     }
-  }
-  time = {
-    version = ">=0.7.2"
+    time = {
+      version = ">=0.7.2"
+    }
   }
 }
 

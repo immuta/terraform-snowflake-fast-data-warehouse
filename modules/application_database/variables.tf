@@ -35,9 +35,9 @@ variable "application_warehouse_auto_suspend_time" {
 }
 
 variable "application_warehouse_auto_resume_time" {
-  default     = 60
+  default     = true
   description = "The suspension time of the warehouse to be created, if applicable."
-  type        = number
+  type        = bool
 }
 
 variable "database_name" {

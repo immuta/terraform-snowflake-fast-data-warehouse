@@ -1,9 +1,5 @@
 // database warehouse (optional)
 
-locals {
-  warehouse_monitor_name = "${local.warehouse_monitor}_MONITOR"
-}
-
 resource "snowflake_warehouse" "app" {
   count = var.create_application_warehouse ? 1 : 0
 
@@ -34,7 +30,7 @@ resource "snowflake_resource_monitor" "app" {
   name            = local.warehouse_monitor_name
   credit_quota    = 24
   frequency       = "DAILY"
-  start_timestamp = formatdate("YYYY-MM-DD 00:00", time_offset.monitor_start_times.rfc3339)
+  start_timestamp = formatdate("YYYY-MM-DD 00:00", time_offset.monitor_start_times[0].rfc3339)
   end_timestamp   = null
 
   notify_triggers            = [100]
