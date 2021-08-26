@@ -1,5 +1,5 @@
 // database user (optional)
-resource "snowflake_user" "app" {
+resource snowflake_user app {
   count = var.create_user ? 1 : 0
 
   name                 = local.user_name
@@ -12,7 +12,7 @@ resource "snowflake_user" "app" {
   must_change_password = false
 }
 
-resource "random_password" "app_user" {
+resource random_password app_user {
   count = var.create_user ? 1 : 0
 
   length  = 16

@@ -7,54 +7,80 @@ terraform {
   }
 }
 
+locals {
+  developers = ["harry", "hermione"]
+}
+
 // This module generates base roles, warehouses and users
 // It does NOT create grants between these users
-module "example_core" {
-  source = "./modules/core"
-
-  employee_users = { "sbailey" = { name = "SBAILEY" } }
-  system_users   = { "immuta" = { name = "IMMUTA" } }
-  roles = {
-    analyst = { name = "REPORTER" }
+module "employees" {
+  source = "./modules/bulk_users"
+  users = {
+    "harry"    = {}
+    "ron"      = { first_name = "Ronald" }
+    "hermione" = {}
+    "fred"     = { login_name = "Ted" }
   }
+}
+
+module "bulk_roles" {
+  source = "./modules/bulk_roles"
+  roles = {
+    analyst = { name = "ANALYST_ROLE" }
+  }
+}
+
+module "bulk_warehouses" {
+  source = "./modules/bulk_warehouses"
   warehouses = {
-    transform = { name = "TRANSFORM_WH" }
-    report    = { name = "REPORTING_WH" }
+    transform = { name = "TRANSFORM_WH", create_resource_monitor = true }
+    report    = { name = "REPORTING_WH", size = "medium" }
+  }
+  default_size    = "x-small"
+  default_comment = "This is my warehouse comment."
+}
+
+// role and warehouse grants
+module "bulk_role_grants" {
+  source = "./modules/bulk_role_grants"
+  grants = {
+    analyst = {
+      role_name = module.bulk_roles.roles["analyst"].name
+      users     = [module.employees.users["harry"].name]
+    }
+  }
+}
+
+module "bulk_warehouse_grants" {
+  source = "./modules/bulk_warehouse_grants"
+  grants = {
+    transform = {
+      warehouse_name = module.bulk_warehouses.warehouses["transform"].name
+      roles          = [module.bulk_roles.roles["analyst"].name]
+    }
+    report = {
+      warehouse_name = module.bulk_warehouses.warehouses["report"].name
+      roles          = [module.bulk_roles.roles["analyst"].name]
+    }
   }
 }
 
 // databases
 module "example_db" {
-  source = "./modules/app_database"
+  source = "./modules/application_database"
 
   db_name             = "ANALYTICS"
-  grant_role_to_roles = ["SYSADMIN"]
-  grant_role_to_users = [module.core.system_users["dbt"].name]
-  grant_read_to_roles = [module.core.roles["reporter"].name]
+  grant_role_to_roles = []
+  grant_role_to_users = [module.employees.users["ron"].name]
+  grant_read_to_roles = [module.bulk_roles.roles["analyst"].name]
 }
 
-// role and warehouse grants
+module "developer_dbs" {
+  for_each = toset(local.developers)
+  source   = "./modules/application_database"
 
-resource "snowflake_role_grants" "reporter" {
-  role_name = module.core.roles["reporter"].name
-
-  roles = ["SYSADMIN"]
-  users = ["PUBLIC", module.core.system_users["immuta"].name]
-}
-
-resource "snowflake_warehouse_grant" "transform" {
-  warehouse_name = module.core.warehouses["transform"].name
-
-  roles = concat(
-    [for m in module.developer_dbs : m.role.name],
-    [module.analytics_db.role.name]
-  )
-}
-
-resource "snowflake_warehouse_grant" "report" {
-  warehouse_name = module.core.warehouses["report"].name
-  roles = [
-    "PUBLIC",
-    module.core.roles["reporter"].name
-  ]
+  db_name             = module.employees.users[each.key].name
+  create_user         = false
+  create_warehouse    = false
+  grant_role_to_users = [module.employees.users[each.key].name]
 }

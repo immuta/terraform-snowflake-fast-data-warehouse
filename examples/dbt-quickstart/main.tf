@@ -7,59 +7,80 @@ terraform {
   }
 }
 
-// This module generates base roles, warehouses and users
+locals {
+  public_role = "PUBLIC"
+  sysadmin_role = "SYSADMIN"
+}
+
+// CORE RESOURCES
+// This section generates base roles, warehouses and users
 // It does NOT create grants between these users
+module employees {
+  source = "./modules/bulk_users"
 
-module "core" {
-  source = "./modules/core"
-
-  employee_users = {
-    "dev1"      = { name = "dev1", login_name = "dev1@immuta.com" }
-    "dev2"      = { name = "dev2", login_name = "dev2@immuta.com" }
+  users = {
+    "dev1"      = { login_name = "dev1@immuta.com" }
+    "dev2"      = { login_name = "dev2@immuta.com" }
     "consumer1" = { name = "consumer", login_name = "consumer@immuta.com" }
   }
-  system_users = {
+  default_role = module.bulk_roles.roles["reporter"]
+}
+
+module systems {
+  source = "./modules/bulk_users"
+
+  users = {
     "dbt"     = { name = "DBT" }
     "immuta"  = { name = "IMMUTA" }
     "meltano" = { name = "MELTANO" }
   }
+}
+
+module bulk_roles {
+  source = "./modules/bulk_roles"
+
   roles = {
     loader      = { name = "LOADER" }
     transformer = { name = "TRANSFORMER" }
-    reporter    = { name = "REPORTER" }
-
+    reporter    = {}
   }
+}
+
+module bulk_warehouses {
+  source = "./modules/bulk_warehouses"
+
   warehouses = {
     transform = { name = "TRANSFORM_WH" }
     report    = { name = "REPORTING_WH" }
   }
 }
 
+// APPLICATION DATABASES
 // databases
-module "analytics_db" {
-  source = "./modules/app_database"
+module analytics_db {
+  source = "./modules/application_database"
 
   db_name             = "ANALYTICS"
   grant_role_to_roles = ["SYSADMIN"]
-  grant_role_to_users = [module.core.system_users["dbt"].name]
-  grant_read_to_roles = [module.core.roles["reporter"].name]
+  grant_role_to_users = [module.systems.users["dbt"].name]
+  grant_read_to_roles = [module.bulk_roles.roles["reporter"].name]
 }
 
-module "raw_db" {
-  source = "./modules/app_database"
+module raw_db {
+  source = "./modules/application_database"
 
   db_name             = "RAW"
   grant_role_to_roles = ["SYSADMIN"]
-  grant_role_to_users = [module.core.system_users["meltano"].name]
+  grant_role_to_users = [module.systems.users["meltano"].name]
   grant_read_to_roles = [
-    module.core.roles["reporter"].name,
-    module.core.roles["transformer"].name,
+    module.bulk_roles.roles["reporter"].name,
+    module.bulk_roles.roles["transformer"].name,
   ]
 }
 
-module "developer_dbs" {
+module developer_dbs {
   for_each = ["dev1", "dev2"]
-  source   = "./modules/app_database"
+  source   = "./modules/application_database"
 
   db_name             = each.value
   create_user         = false
@@ -67,17 +88,18 @@ module "developer_dbs" {
   grant_role_to_users = [each.key]
 }
 
-// role and warehouse grants
+// GRANTS
+// Grants on core roles and warehouses need to be performed
+// after all resources are defined and created.
+resource snowflake_role_grants reporter {
+  role_name = module.bulk_roles.roles["reporter"].name
 
-resource "snowflake_role_grants" "reporter" {
-  role_name = module.core.roles["reporter"].name
-
-  roles = ["SYSADMIN"]
-  users = ["PUBLIC", module.core.system_users["immuta"].name]
+  roles = [local.public_role, local.sysadmin_role]
+  users = [module.systems.users["immuta"].name]
 }
 
-resource "snowflake_warehouse_grant" "transform" {
-  warehouse_name = module.core.warehouses["transform"].name
+resource snowflake_warehouse_grant transform {
+  warehouse_name = module.bulk_warehouses.warehouses["transform"].name
 
   roles = concat(
     [for m in module.developer_dbs : m.role.name],
@@ -85,10 +107,10 @@ resource "snowflake_warehouse_grant" "transform" {
   )
 }
 
-resource "snowflake_warehouse_grant" "report" {
-  warehouse_name = module.core.warehouses["report"].name
+resource snowflake_warehouse_grant report {
+  warehouse_name = module.bulk_warehouses.warehouses["report"].name
   roles = [
     "PUBLIC",
-    module.core.roles["reporter"].name
+    module.bulk_roles.roles["reporter"].name
   ]
 }
