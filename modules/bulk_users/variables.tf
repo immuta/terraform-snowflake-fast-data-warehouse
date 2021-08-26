@@ -63,3 +63,9 @@ variable default_must_change_password {
   description = "foo"
   default     = false
 }
+
+variable default_generate_user_password {
+  type = bool
+  description = "If true, Terraform will generate a random password for the user."
+  default = false
+}

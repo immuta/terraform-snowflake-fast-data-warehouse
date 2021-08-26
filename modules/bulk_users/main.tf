@@ -12,9 +12,10 @@ terraform {
 
 locals {
   users_requiring_password = [
-    for k, v in var.users : k if lookup(v, "create_random_password", false)
+    for k, v in var.users : k if lookup(v, "generate_user_password", var.default_generate_user_password)
   ]
 }
+
 
 resource snowflake_user main {
   for_each = var.users
@@ -30,8 +31,9 @@ resource snowflake_user main {
   last_name            = lookup(each.value, "last_name", var.default_last_name)
   login_name           = lookup(each.value, "login_name", var.default_login_name)
   must_change_password = lookup(each.value, "must_change_password", var.default_must_change_password)
-  password             = lookup(each.value, "password", random_password.users[each.key].result)
+  password             = lookup(each.value, "generate_user_password", var.default_generate_user_password) ? random_password.users[each.key].result : null
 
+  depends_on = [random_password.users]
   lifecycle {
     ignore_changes = [
       password,
@@ -41,7 +43,7 @@ resource snowflake_user main {
 }
 
 resource random_password users {
-  for_each = var.users
+  for_each = toset(local.users_requiring_password)
 
   length  = 16
   special = false
