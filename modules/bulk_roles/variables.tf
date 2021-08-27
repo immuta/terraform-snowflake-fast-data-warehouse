@@ -2,8 +2,8 @@ variable "roles" {
   default     = {}
   description = "Map of roles to create. 'name' required. Values from the 'snowflake_user' resource will be applied. 'name' is required."
   type = map(object({
-    name    = optional(string)
-    comment = optional(string)
+      name    = optional(string)
+      comment = optional(string)
     })
   )
 }

@@ -1,18 +1,18 @@
 variable "create_application_user" {
   default     = false
-  description = "If true, will create a user with access to the database role."
+  description = "If true, creates a user with access to the database role."
   type        = bool
 }
 
 variable "create_application_warehouse" {
   default     = false
-  description = "If true, will create a warehouse and grant it to the database role."
+  description = "If true, creates a warehouse and grants it to the database role."
   type        = bool
 }
 
 variable "create_application_warehouse_monitor" {
   default     = false
-  description = "If true, will create a warehouse monitor for the application warehouse. Requires ACCOUNTADMIN privileges."
+  description = "If true, creates a warehouse monitor for the application warehouse. Requires ACCOUNTADMIN privileges."
   type        = bool
 }
 
@@ -41,7 +41,7 @@ variable "application_warehouse_auto_resume_time" {
 }
 
 variable "database_name" {
-  description = "Application name will be used to create a user, role, database and warehouse."
+  description = "The database name will be used to drive the names of all application resources."
   type        = string
 }
 
@@ -53,18 +53,18 @@ variable "description" {
 
 variable "grant_role_to_roles" {
   default     = []
-  description = "The roles that will have full access to app resources."
+  description = "Additional roles that will have full access to the module resources."
   type        = list(string)
 }
 
 variable "grant_role_to_users" {
   default     = []
-  description = "The users that will have full access to app resources."
+  description = "Additional users that will have full access to the module resources."
   type        = list(string)
 }
 
 variable "grant_read_to_roles" {
   default     = []
-  description = "The roles that should have read access to database resources."
+  description = "Additional roles that should have read access to module resources."
   type        = list(string)
 }
