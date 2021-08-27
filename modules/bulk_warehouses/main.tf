@@ -2,29 +2,29 @@ terraform {
   required_providers {
     snowflake = {
       source  = "chanzuckerberg/snowflake"
-      version = ">=0.18.1"
+      version = ">=0.23.1"
     }
     time = {
       version = ">=0.7.2"
     }
   }
+  experiments = [module_variable_optional_attrs]
 }
 
 locals {
   monitored_warehouses = [
-    for k, v in var.warehouses : k if lookup(v, "create_resource_monitor", var.default_create_resource_monitor)
+    for k, v in var.warehouses : k if coalesce(v.create_resource_monitor, var.default_create_resource_monitor)
   ]
 }
-
 
 resource "snowflake_warehouse" "main" {
   for_each = var.warehouses
 
-  name           = coalesce(each.key, each.value["name"])
-  auto_suspend   = lookup(each.value, "auto_suspend", var.default_auto_suspend)
-  auto_resume    = lookup(each.value, "auto_resume", var.default_auto_resume)
-  comment        = lookup(each.value, "comment", var.default_comment)
-  warehouse_size = lookup(each.value, "warehouse_size", var.default_size)
+  name           = lookup(each.value, "name", each.key)
+  auto_suspend   = try(coalesce(each.value["auto_suspend"], var.default_auto_suspend), null)
+  auto_resume    = try(coalesce(each.value["auto_resume"], var.default_auto_resume), null)
+  comment        = try(coalesce(each.value["comment"], var.default_comment), null)
+  warehouse_size = try(coalesce(each.value["warehouse_size"], var.default_size), null)
 }
 
 resource "time_offset" "monitor_start_times" {

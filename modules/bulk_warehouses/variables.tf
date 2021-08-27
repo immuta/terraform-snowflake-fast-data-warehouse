@@ -1,7 +1,15 @@
 variable "warehouses" {
   default     = {}
-  description = "Map of warehouses to be created. Values from the 'snowflake_warehouse' resource will be applied. Key will be used as 'name' if not specified."
-  type        = map(any)
+  description = "Optional config for each warehouse to be created. Key will be used as 'name' if not specified."
+  type = map(object({
+    name                    = optional(string)
+    comment                 = optional(string)
+    auto_suspend            = optional(string)
+    auto_resume             = optional(bool)
+    warehouse_size          = optional(string)
+    create_resource_monitor = optional(bool)
+    })
+  )
 }
 
 variable "default_create_resource_monitor" {
