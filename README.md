@@ -13,6 +13,8 @@ This set of modules simplifies many of these common operations and provides easy
 handles for managing change over time, without managing a massive number of distinct
 Terraform resources.
 
+![Overview of warehouse organization with this module.](./assets/overview.png)
+
 By modularizing these operations, we also avoid some common "gotchas", especially
 around role grants, and are able to include some convenient extras, like automatically
 creating resource monitors for new Snowflake warehouses.
