@@ -1,27 +1,30 @@
-terraform {
-  required_providers {
-    snowflake = {
-      source  = "chanzuckerberg/snowflake"
-      version = ">=0.23.2"
-    }
-  }
+provider "snowflake" {
+  account  = var.snowflake_account
+  region   = var.snowflake_region
+  username = var.snowflake_username
+  password = var.snowflake_user_password
+  role     = var.snowflake_user_role
 }
 
 locals {
-  developers = ["harry", "hermione"]
+  developer_list = ["harry", "hermione"]
 }
 
-// This module generates base roles, warehouses and users
-// It does NOT create grants between these users
 module "employees" {
   source = "./modules/bulk_users"
   users = {
     "harry"    = {}
-    "ron"      = { first_name = "Ronald" }
+    "ron"      = {
+      first_name = "Ronald"
+    }
     "hermione" = {}
-    "fred"     = { login_name = "Ted" }
+    "fred"     = {
+      login_name = "fred"
+    }
   }
+
   default_role = "PUBLIC"
+  default_generate_user_password = true
 }
 
 module "bulk_roles" {
@@ -34,8 +37,14 @@ module "bulk_roles" {
 module "bulk_warehouses" {
   source = "./modules/bulk_warehouses"
   warehouses = {
-    transform = { name = "TRANSFORM_WH", create_resource_monitor = true }
-    report    = { name = "REPORTING_WH", size = "medium" }
+    transform = {
+      name = "TRANSFORM_WH"
+      create_resource_monitor = true
+    }
+    report    = {
+      name = "REPORTING_WH"
+      size = "medium"
+    }
   }
   default_size    = "x-small"
   default_comment = "This is my warehouse comment."
@@ -77,7 +86,7 @@ module "example_db" {
 }
 
 module "developer_dbs" {
-  for_each = toset(local.developers)
+  for_each = toset(local.developer_list)
   source   = "./modules/application_database"
 
   database_name                = module.employees.users[each.key].name
