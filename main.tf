@@ -80,8 +80,8 @@ module "example_db" {
   source = "./modules/application_database"
 
   database_name       = "ANALYTICS"
-  grant_role_to_roles = []
-  grant_role_to_users = [module.employees.users["ron"].name]
+  grant_admin_to_roles = []
+  grant_admin_to_users = [module.employees.users["ron"].name]
   grant_read_to_roles = [module.bulk_roles.roles["analyst"].name]
 }
 
@@ -92,5 +92,5 @@ module "developer_dbs" {
   database_name                = module.employees.users[each.key].name
   create_application_user      = false
   create_application_warehouse = false
-  grant_role_to_users          = [module.employees.users[each.key].name]
+  grant_admin_to_users          = [module.employees.users[each.key].name]
 }

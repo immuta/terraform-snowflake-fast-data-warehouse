@@ -1,5 +1,4 @@
 // database warehouse (optional)
-
 resource "snowflake_warehouse" "app" {
   count = var.create_application_warehouse ? 1 : 0
 
@@ -15,7 +14,7 @@ resource "snowflake_warehouse_grant" "app_role" {
 
   warehouse_name = local.warehouse_name
   privilege      = "USAGE"
-  roles          = [snowflake_role.app.name]
+  roles          = [snowflake_role.admin.name]
 }
 
 resource "time_offset" "monitor_start_times" {

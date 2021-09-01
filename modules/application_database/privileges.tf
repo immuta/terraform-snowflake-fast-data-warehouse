@@ -1,29 +1,43 @@
 locals {
-  elevated_privileges = {
+  all_admin_roles = [snowflake_role.admin.name]
+  all_read_roles  = [snowflake_role.admin.name, snowflake_role.reader.name]
+  // https://docs.snowflake.com/en/sql-reference/sql/grant-privilege.html
+  admin_privileges = {
     database = ["CREATE SCHEMA"]
     schema = [
-      "CREATE EXTERNAL TABLE",
-      "CREATE FILE FORMAT",
+      "MODIFY",
+      "MONITOR",
       "CREATE TABLE",
+      "CREATE EXTERNAL TABLE",
       "CREATE VIEW",
-      "MODIFY"
+      "CREATE MATERIALIZED VIEW",
+      "CREATE MASKING POLICY",
+      # "CREATE ROW ACCESS POLICY",
+      # "CREATE TAG",
+      "CREATE SEQUENCE",
+      "CREATE FUNCTION",
+      "CREATE PROCEDURE",
+      "CREATE FILE FORMAT",
+      "CREATE STAGE",
+      "CREATE PIPE",
+      "CREATE STREAM",
+      "CREATE TASK"
     ]
     table = ["INSERT", "TRUNCATE", "UPDATE", "DELETE"]
     view  = []
   }
-  read_privileges = {
+  reader_privileges = {
     database = ["USAGE"]
     schema   = ["USAGE"]
-    table    = ["SELECT"]
-    view     = ["SELECT"]
+    table    = ["SELECT", "REFERENCES"]
+    view     = ["SELECT", "REFERENCES"]
   }
 }
 
 
 // read privileges on database + child objects
-
 resource "snowflake_database_grant" "read" {
-  for_each = toset(local.read_privileges["database"])
+  for_each = toset(local.reader_privileges["database"])
 
   database_name = snowflake_database.app.name
   privilege     = each.key
@@ -31,7 +45,7 @@ resource "snowflake_database_grant" "read" {
 }
 
 resource "snowflake_schema_grant" "read" {
-  for_each = toset(local.read_privileges["schema"])
+  for_each = toset(local.reader_privileges["schema"])
 
   database_name = snowflake_database.app.name
   on_future     = true
@@ -40,7 +54,7 @@ resource "snowflake_schema_grant" "read" {
 }
 
 resource "snowflake_table_grant" "read" {
-  for_each = toset(local.read_privileges["table"])
+  for_each = toset(local.reader_privileges["table"])
 
   database_name = snowflake_database.app.name
   on_future     = true
@@ -49,7 +63,7 @@ resource "snowflake_table_grant" "read" {
 }
 
 resource "snowflake_view_grant" "read" {
-  for_each = toset(local.read_privileges["view"])
+  for_each = toset(local.reader_privileges["view"])
 
   database_name = snowflake_database.app.name
   on_future     = true
@@ -60,36 +74,36 @@ resource "snowflake_view_grant" "read" {
 // elevated privileges on database + child objects
 
 resource "snowflake_database_grant" "app_role" {
-  for_each = toset(local.elevated_privileges["database"])
+  for_each = toset(local.admin_privileges["database"])
 
   database_name = snowflake_database.app.name
   privilege     = each.key
-  roles         = local.all_elevated_roles
+  roles         = local.all_admin_roles
 }
 
 resource "snowflake_schema_grant" "app_role" {
-  for_each = toset(local.elevated_privileges["schema"])
+  for_each = toset(local.admin_privileges["schema"])
 
   database_name = snowflake_database.app.name
   on_future     = true
   privilege     = each.key
-  roles         = local.all_elevated_roles
+  roles         = local.all_admin_roles
 }
 
 resource "snowflake_table_grant" "app_role" {
-  for_each = toset(local.elevated_privileges["table"])
+  for_each = toset(local.admin_privileges["table"])
 
   database_name = snowflake_database.app.name
   on_future     = true
   privilege     = each.key
-  roles         = local.all_elevated_roles
+  roles         = local.all_admin_roles
 }
 
 resource "snowflake_view_grant" "app_role" {
-  for_each = toset(local.elevated_privileges["view"])
+  for_each = toset(local.admin_privileges["view"])
 
   database_name = snowflake_database.app.name
   on_future     = true
   privilege     = each.key
-  roles         = local.all_elevated_roles
+  roles         = local.all_admin_roles
 }

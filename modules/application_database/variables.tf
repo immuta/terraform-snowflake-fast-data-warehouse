@@ -51,13 +51,13 @@ variable "description" {
   type        = string
 }
 
-variable "grant_role_to_roles" {
+variable "grant_admin_to_roles" {
   default     = []
   description = "Additional roles that will have full access to the module resources."
   type        = list(string)
 }
 
-variable "grant_role_to_users" {
+variable "grant_admin_to_users" {
   default     = []
   description = "Additional users that will have full access to the module resources."
   type        = list(string)
@@ -66,5 +66,11 @@ variable "grant_role_to_users" {
 variable "grant_read_to_roles" {
   default     = []
   description = "Additional roles that should have read access to module resources."
+  type        = list(string)
+}
+
+variable "grant_read_to_users" {
+  default     = []
+  description = "Additional users that should have read access to module resources."
   type        = list(string)
 }

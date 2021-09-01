@@ -26,7 +26,7 @@ module developer_dbs {
     source = "./modules/application_database"
 
     database_name       = each.value
-    grant_role_to_users = [each.value]
+    grant_admin_to_users = [each.value]
 }
 ```
 
