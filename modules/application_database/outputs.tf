@@ -3,9 +3,14 @@ output "database" {
   value       = snowflake_database.app
 }
 
-output "role" {
-  description = "Role resource created for the app."
-  value       = snowflake_role.app
+output "admin_role" {
+  description = "Admin resource created for the app. Should not be granted to roles and users outside of the module."
+  value       = snowflake_role.admin
+}
+
+output "reader_role" {
+  description = "Role resource created for the app. Should not be granted to roles and resources outside of the module."
+  value       = snowflake_role.reader
 }
 
 output "user" {

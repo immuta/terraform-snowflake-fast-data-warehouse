@@ -5,7 +5,7 @@ resource "snowflake_user" "app" {
   name                 = local.user_name
   login_name           = local.user_name
   password             = random_password.app_user[0].result
-  default_role         = snowflake_role.app.name
+  default_role         = snowflake_role.admin.name
   default_namespace    = snowflake_database.app.name
   default_warehouse    = local.user_default_warehouse
   comment              = var.description
