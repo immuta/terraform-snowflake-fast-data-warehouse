@@ -12,8 +12,8 @@ locals {
       "CREATE VIEW",
       "CREATE MATERIALIZED VIEW",
       "CREATE MASKING POLICY",
-      # "CREATE ROW ACCESS POLICY",
-      # "CREATE TAG",
+      # "CREATE ROW ACCESS POLICY",  # Not GA yet
+      # "CREATE TAG",                # Not GA yet
       "CREATE SEQUENCE",
       "CREATE FUNCTION",
       "CREATE PROCEDURE",
@@ -25,7 +25,7 @@ locals {
     ]
     table = ["INSERT", "TRUNCATE", "UPDATE", "DELETE"]
     view  = []
-    // Public Schema Only
+    // Public schema only
     external_table    = []
     file_format       = []
     function          = []
@@ -34,7 +34,7 @@ locals {
     pipe              = ["OPERATE"]
     procedure         = []
     sequence          = []
-    stage             = ["READ", "WRITE"]
+    stage             = [] # Adding ["WRITE", "READ"] throws a 'Privilege Order' violation
     stream            = []
     task              = ["OPERATE"]
   }
@@ -44,7 +44,7 @@ locals {
     schema   = ["USAGE"]
     table    = ["SELECT", "REFERENCES"]
     view     = ["SELECT", "REFERENCES"]
-    // Public Schema Only
+    // Public schema only
     external_table    = ["SELECT"]
     file_format       = ["USAGE"]
     function          = ["USAGE"]
