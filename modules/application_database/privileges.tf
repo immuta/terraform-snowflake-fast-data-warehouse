@@ -79,6 +79,15 @@ resource "snowflake_schema_grant" "read" {
   roles         = local.all_read_roles
 }
 
+resource "snowflake_schema_grant" "public_read" {
+  for_each = toset(local.reader_privileges["schema"])
+
+  database_name = snowflake_database.app.name
+  schema_name     = local.public_schema_name
+  privilege     = each.key
+  roles         = local.all_read_roles
+}
+
 resource "snowflake_table_grant" "read" {
   for_each = toset(local.reader_privileges["table"])
 
@@ -99,7 +108,7 @@ resource "snowflake_view_grant" "read" {
 
 // elevated privileges on database + child objects
 
-resource "snowflake_database_grant" "app_role" {
+resource "snowflake_database_grant" "admin" {
   for_each = toset(local.admin_privileges["database"])
 
   database_name = snowflake_database.app.name
@@ -107,7 +116,7 @@ resource "snowflake_database_grant" "app_role" {
   roles         = local.all_admin_roles
 }
 
-resource "snowflake_schema_grant" "app_role" {
+resource "snowflake_schema_grant" "admin" {
   for_each = toset(local.admin_privileges["schema"])
 
   database_name = snowflake_database.app.name
@@ -116,7 +125,16 @@ resource "snowflake_schema_grant" "app_role" {
   roles         = local.all_admin_roles
 }
 
-resource "snowflake_table_grant" "app_role" {
+resource "snowflake_schema_grant" "public_admin" {
+  for_each = toset(local.admin_privileges["schema"])
+
+  database_name = snowflake_database.app.name
+  schema_name     = local.public_schema_name
+  privilege     = each.key
+  roles         = local.all_admin_roles
+}
+
+resource "snowflake_table_grant" "admin" {
   for_each = toset(local.admin_privileges["table"])
 
   database_name = snowflake_database.app.name
@@ -125,7 +143,7 @@ resource "snowflake_table_grant" "app_role" {
   roles         = local.all_admin_roles
 }
 
-resource "snowflake_view_grant" "app_role" {
+resource "snowflake_view_grant" "admin" {
   for_each = toset(local.admin_privileges["view"])
 
   database_name = snowflake_database.app.name

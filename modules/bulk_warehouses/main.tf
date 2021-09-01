@@ -20,7 +20,7 @@ locals {
 resource "snowflake_warehouse" "main" {
   for_each = var.warehouses
 
-  name           = lookup(each.value, "name", each.key)
+  name           = coalesce(each.value["name"], each.key)
   auto_suspend   = try(coalesce(each.value["auto_suspend"], var.default_auto_suspend), null)
   auto_resume    = try(coalesce(each.value["auto_resume"], var.default_auto_resume), null)
   comment        = try(coalesce(each.value["comment"], var.default_comment), null)
