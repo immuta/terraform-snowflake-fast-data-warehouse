@@ -12,7 +12,7 @@ locals {
     var.application_user_default_warehouse
   )
   create_reader_role_grants = length(var.grant_read_to_roles) > 0 || length(var.grant_read_to_users) > 0 ? 1 : 0
-  user_name              = upper("${var.database_name}_USER")
-  warehouse_name         = upper("${var.database_name}_WH")
-  warehouse_monitor_name = upper("${local.warehouse_name}_MONITOR")
+  user_name                 = upper("${var.database_name}_USER")
+  warehouse_name            = upper("${var.database_name}_WH")
+  warehouse_monitor_name    = upper("${local.warehouse_name}_MONITOR")
 }

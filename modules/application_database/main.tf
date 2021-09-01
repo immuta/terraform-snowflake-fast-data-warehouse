@@ -26,8 +26,8 @@ resource "snowflake_role" "admin" {
 
 resource "snowflake_role_grants" "admin" {
   role_name = snowflake_role.admin.name
-  roles = var.grant_admin_to_roles
-  users = local.grant_admin_to_users
+  roles     = var.grant_admin_to_roles
+  users     = local.grant_admin_to_users
 }
 
 resource "snowflake_role" "reader" {
@@ -39,6 +39,6 @@ resource "snowflake_role_grants" "reader" {
   count = local.create_reader_role_grants
 
   role_name = snowflake_role.reader.name
-  roles = var.grant_read_to_roles
-  users = var.grant_read_to_users
+  roles     = var.grant_read_to_roles
+  users     = var.grant_read_to_users
 }
