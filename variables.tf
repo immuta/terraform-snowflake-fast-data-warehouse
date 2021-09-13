@@ -10,13 +10,13 @@ variable "snowflake_region" {
 
 variable "snowflake_username" {
   description = "The username for the Snowflake Terraform user"
-  sensitive = true
+  sensitive   = true
   type        = string
 }
 
 variable "snowflake_user_password" {
   description = "The password for the Snowflake Terraform user"
-  sensitive = true
+  sensitive   = true
   type        = string
 }
 

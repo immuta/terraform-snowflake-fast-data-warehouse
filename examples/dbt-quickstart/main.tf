@@ -52,7 +52,7 @@ module "analytics_db" {
   for_each = toset(["STAGING", "PROD"])
   source   = "../../modules/application_database"
 
-  database_name = "ANALYTICS_${each.value}"
+  database_name        = "ANALYTICS_${each.value}"
   grant_admin_to_roles = [local.sysadmin_role]
   grant_admin_to_users = [module.systems.users["DBT_CLOUD_USER"].name]
   grant_read_to_roles = [
@@ -67,7 +67,7 @@ module "stitch_db" {
   database_name                = "STITCH"
   create_application_user      = true
   create_application_warehouse = true
-  grant_admin_to_roles = [local.sysadmin_role]
+  grant_admin_to_roles         = [local.sysadmin_role]
   grant_read_to_roles = [
     module.bulk_roles.roles["READER"].name,
   ]
@@ -79,7 +79,7 @@ module "fivetran_db" {
   database_name                = "FIVETRAN"
   create_application_user      = true
   create_application_warehouse = true
-  grant_admin_to_roles = [local.sysadmin_role]
+  grant_admin_to_roles         = [local.sysadmin_role]
   grant_read_to_roles = [
     module.bulk_roles.roles["READER"].name,
   ]
@@ -91,7 +91,7 @@ module "meltano_db" {
   database_name                = "MELTANO"
   create_application_user      = true
   create_application_warehouse = true
-  grant_admin_to_roles = [local.sysadmin_role]
+  grant_admin_to_roles         = [local.sysadmin_role]
   grant_read_to_roles = [
     module.bulk_roles.roles["READER"].name,
   ]
@@ -126,8 +126,8 @@ module "bulk_warehouse_grants" {
   grants = {
     PROCESSING_WH = {
       roles = concat(
-        [for m in module.analytics_db: m.admin_role.name],
-        [for m in module.developer_dbs: m.admin_role.name],
+        [for m in module.analytics_db : m.admin_role.name],
+        [for m in module.developer_dbs : m.admin_role.name],
         [module.bulk_roles.roles["ANALYST"].name]
       )
     }

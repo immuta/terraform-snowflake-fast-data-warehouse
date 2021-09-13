@@ -16,6 +16,12 @@ variable "create_application_warehouse_monitor" {
   type        = bool
 }
 
+variable "admin_role_name_suffix" {
+  default     = "_ADMIN"
+  description = "The suffix appended to the database name to determine the admin role (e.g. APP_ADMIN)."
+  type        = string
+}
+
 variable "application_user_default_warehouse" {
   default     = null
   description = "The name of the default warehouse to be used by the database_user. Only used when creating a user but not creating a warehouse."
@@ -73,4 +79,10 @@ variable "grant_read_to_users" {
   default     = []
   description = "Additional users that should have read access to module resources."
   type        = list(string)
+}
+
+variable "reader_role_name_suffix" {
+  default     = "_READER"
+  description = "The suffix appended to the database name to determine the reader role (e.g. APP_READER)."
+  type        = string
 }

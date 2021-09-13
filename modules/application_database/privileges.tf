@@ -83,7 +83,7 @@ resource "snowflake_schema_grant" "public_read" {
   for_each = toset(local.reader_privileges["schema"])
 
   database_name = snowflake_database.app.name
-  schema_name     = local.public_schema_name
+  schema_name   = local.public_schema_name
   privilege     = each.key
   roles         = local.all_read_roles
 }
@@ -129,7 +129,7 @@ resource "snowflake_schema_grant" "public_admin" {
   for_each = toset(local.admin_privileges["schema"])
 
   database_name = snowflake_database.app.name
-  schema_name     = local.public_schema_name
+  schema_name   = local.public_schema_name
   privilege     = each.key
   roles         = local.all_admin_roles
 }
