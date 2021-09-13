@@ -48,7 +48,6 @@ module my_warehouses {
     }
     default_size = "medium"
     default_auto_suspend = 60
-    default_auto_suspend = 60
 }
 ```
 
@@ -75,8 +74,8 @@ module "dbt_database" {
   create_warehouse    = true
   warehouse_size      = "medium"
 
-  grant_role_to_roles = []          # Grants privileged role direftly
-  grant_role_to_users = []          # Grants privileged role directly
+  grant_admin_to_roles = []          # Grants privileged role direftly
+  grant_admin_to_users = []          # Grants privileged role directly
   grant_read_to_roles = ["READER"]  # Grants read-only privileges to role
 }
 ```
@@ -91,7 +90,7 @@ module "developer_databases" {
   source   = "./modules/application_database"
 
   db_name             = "DEV_${each.key}"
-  grant_role_to_users = [each.key]
+  grant_admin_to_users = [each.key]
 }
 ```
 
@@ -152,5 +151,3 @@ As with any highly privileged role, you should protect these permissions very
 carefully, as they allow the user to set up your warehouse -- and tear it down!
 Snowflake's new Organizations features make it much easier to stand up development
 environments for implementing a staging and production workflow.
-
-## Development
