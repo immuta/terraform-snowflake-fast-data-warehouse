@@ -89,7 +89,8 @@ module "developer_dbs" {
   for_each = toset(local.developer_list)
   source   = "./modules/application_database"
 
-  database_name                = module.employees.users[each.key].name
+  database_name                = "DEV_${module.employees.users[each.key].name}"
+  admin_role_name_suffix       = ""
   create_application_user      = false
   create_application_warehouse = false
   grant_admin_to_users         = [module.employees.users[each.key].name]
