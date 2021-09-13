@@ -25,7 +25,7 @@ resource "snowflake_role" "admin" {
 }
 
 resource "snowflake_role_grants" "admin" {
-  role_name = snowflake_role.admin.nameterr
+  role_name = snowflake_role.admin.name
   roles     = var.grant_admin_to_roles
   users     = local.grant_admin_to_users
 }
