@@ -3,7 +3,7 @@ locals {
   sysadmin_role = "SYSADMIN"
   employees = {
     "EMPLOYEE_A" = {
-      name = "employee.a@immuta.com"
+      name       = "employee.a@immuta.com"
       login_name = "employee.a@immuta.com"
     }
     "EMPLOYEE_B" = {

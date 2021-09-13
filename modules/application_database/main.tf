@@ -20,18 +20,18 @@ resource "snowflake_database" "app" {
 
 // application admin and reader roles
 resource "snowflake_role" "admin" {
-  name    = snowflake_database.app.name
+  name    = local.admin_role_name
   comment = var.description
 }
 
 resource "snowflake_role_grants" "admin" {
-  role_name = snowflake_role.admin.name
+  role_name = snowflake_role.admin.nameterr
   roles     = var.grant_admin_to_roles
   users     = local.grant_admin_to_users
 }
 
 resource "snowflake_role" "reader" {
-  name    = "${snowflake_database.app.name}_READER"
+  name    = local.reader_role_name
   comment = var.description
 }
 

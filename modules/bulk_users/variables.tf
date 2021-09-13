@@ -2,20 +2,19 @@ variable "users" {
   default     = {}
   description = "Map of users to be created. Values from the 'snowflake_user' resource will be applied. 'name' is required."
   type = map(object({
-      name                   = optional(string)
-      comment                = optional(string)
-      display_name           = optional(string)
-      email                  = optional(string)
-      first_name             = optional(string)
-      last_name              = optional(string)
-      login_name             = optional(string)
-      default_namespace      = optional(string)
-      default_role           = optional(string)
-      default_warehouse      = optional(string)
-      must_change_password   = optional(bool)
-      generate_user_password = optional(bool)
-    }
-    )
+    name                   = optional(string)
+    comment                = optional(string)
+    display_name           = optional(string)
+    email                  = optional(string)
+    first_name             = optional(string)
+    last_name              = optional(string)
+    login_name             = optional(string)
+    default_namespace      = optional(string)
+    default_role           = optional(string)
+    default_warehouse      = optional(string)
+    must_change_password   = optional(bool)
+    generate_user_password = optional(bool)
+    })
   )
 }
 
