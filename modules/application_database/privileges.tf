@@ -5,31 +5,36 @@ locals {
   admin_privileges = {
     database = ["CREATE SCHEMA"]
     schema = [
+      "CREATE EXTERNAL TABLE",
+      "CREATE FILE FORMAT",
+      "CREATE FUNCTION",
+      "CREATE MASKING POLICY",
+      # "CREATE MATERIALIZED VIEW",   # Not GA yet
+      "CREATE PIPE",
+      "CREATE PROCEDURE",
+      # "CREATE ROW ACCESS POLICY",   # Not GA yet
+      "CREATE SEQUENCE",
+      "CREATE STAGE",
+      "CREATE STREAM",
+      "CREATE TABLE",
+      # "CREATE TAG",                 # Not GA yet
+      "CREATE TASK",
+      "CREATE VIEW",
       "MODIFY",
       "MONITOR",
-      "CREATE TABLE",
-      "CREATE EXTERNAL TABLE",
-      "CREATE VIEW",
-      "CREATE MATERIALIZED VIEW",
-      "CREATE MASKING POLICY",
-      # "CREATE ROW ACCESS POLICY",  # Not GA yet
-      # "CREATE TAG",                # Not GA yet
-      "CREATE SEQUENCE",
-      "CREATE FUNCTION",
-      "CREATE PROCEDURE",
-      "CREATE FILE FORMAT",
-      "CREATE STAGE",
-      "CREATE PIPE",
-      "CREATE STREAM",
-      "CREATE TASK"
     ]
-    table = ["INSERT", "TRUNCATE", "UPDATE", "DELETE"]
+    table = [
+      "DELETE",
+      "INSERT",
+      "TRUNCATE",
+      "UPDATE",
+    ]
     view  = []
     // Public schema only
     external_table    = []
     file_format       = []
     function          = []
-    materialized_view = []
+    # materialized_view = []
     masking_policy    = ["APPLY"]
     pipe              = ["OPERATE"]
     procedure         = []
@@ -48,7 +53,7 @@ locals {
     external_table    = ["SELECT"]
     file_format       = ["USAGE"]
     function          = ["USAGE"]
-    materialized_view = ["SELECT"]
+    # materialized_view = ["SELECT"]
     masking_policy    = []
     pipe              = ["MONITOR"]
     procedure         = ["USAGE"]
