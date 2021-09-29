@@ -81,6 +81,12 @@ variable "grant_read_to_users" {
   type        = list(string)
 }
 
+variable "grant_database_usage_to_roles" {
+  default     = []
+  description = "Additional roles that should have only the USAGE privilege on the module database. This allows sub-resources to be granted individually by the admin role."
+  type        = list(string)
+}
+
 variable "reader_role_name_suffix" {
   default     = "_READER"
   description = "The suffix appended to the database name to determine the reader role (e.g. APP_READER)."

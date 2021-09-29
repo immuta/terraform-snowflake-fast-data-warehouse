@@ -72,7 +72,10 @@ resource "snowflake_database_grant" "read" {
 
   database_name = snowflake_database.app.name
   privilege     = each.key
-  roles         = local.all_read_roles
+  roles         = concat(
+    local.all_read_roles,
+    var.grant_database_usage_to_roles
+  )
 }
 
 resource "snowflake_schema_grant" "read" {
@@ -90,7 +93,10 @@ resource "snowflake_schema_grant" "public_read" {
   database_name = snowflake_database.app.name
   schema_name   = local.public_schema_name
   privilege     = each.key
-  roles         = local.all_read_roles
+  roles         = concat(
+    local.all_read_roles,
+    var.grant_database_usage_to_roles
+  )
 }
 
 resource "snowflake_table_grant" "read" {
