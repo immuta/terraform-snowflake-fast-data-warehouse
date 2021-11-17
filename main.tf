@@ -7,7 +7,7 @@ provider "snowflake" {
 }
 
 locals {
-  developer_list = ["klundstedt", "akillinger"]
+  developer_list = ["klundstedt", "akillinger", "terraform_user"]
 }
 
 # module "employees" {
